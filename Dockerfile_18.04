@@ -1,0 +1,29 @@
+FROM px4io/px4-dev-ros-melodic
+
+SHELL ["/bin/bash", "-c"]
+ENV DEBIAN_FRONTEND noninteractive
+ENV DISPLAY :99
+
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F42ED6FBAB17C654 \
+  && apt-get update && apt-get -y --quiet install \
+  apt-utils \
+  ros-melodic-laser-geometry \
+  ros-melodic-rviz \
+  ros-melodic-rqt-reconfigure \
+  ros-melodic-mavros \
+  ros-melodic-mavros-extras \
+  libarmadillo-dev \
+  libgazebo9-dev \
+  vim
+
+ENV GAZEBO_PLUGIN_PATH /usr/lib/x86_64-linux-gnu/gazebo-9/plugins
+
+RUN pip3 install cython && pip3 install mavproxy
+
+COPY . /root/catkin_ws/src/px4_fast_planner/
+
+RUN cd ~/catkin_ws/src/px4_fast_planner/install \
+  && . /opt/ros/melodic/setup.bash \
+  && ./setup.sh
+
+CMD ["bash", "-i", "-c", "roslaunch px4_fast_planner px4_fast_planner.launch"]

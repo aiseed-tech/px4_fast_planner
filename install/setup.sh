@@ -2,18 +2,6 @@
 
 BUILD_PX4="true"
 
-echo -e "\e[1;33m Do you want to build PX4 v1.10.1? (y) for simulation (n) if setting this up on on-barod computer \e[0m"
-read var
-if [ "$var" != "y" ] && [ "$var" != "Y" ] ; then
-    echo -e "\e[1;33m Skipping PX4 v1.10.1 \e[0m"
-    BUILD_PX4="false"
-    sleep 1
-else
-    echo -e "\e[1;33m PX4 v1.10.1 will be built \e[0m"
-    BUILD_PX4="true"
-    sleep 1
-fi
-
 CATKIN_WS=${HOME}/catkin_ws
 CATKIN_SRC=${HOME}/catkin_ws/src
 
@@ -33,10 +21,10 @@ catkin config --merge-devel
 catkin config --cmake-args -DCMAKE_BUILD_TYPE=Release
 
 grep -xF 'source '${HOME}'/catkin_ws/devel/setup.bash' ${HOME}/.bashrc || echo "source $HOME/catkin_ws/devel/setup.bash" >> $HOME/.bashrc
-####################################### Setup PX4 v1.10.1 #######################################
+####################################### Setup PX4 #######################################
 if [ "$BUILD_PX4" != "false" ]; then
 
-    echo -e "\e[1;33m Setting up Px4 v1.10.1 \e[0m"
+    echo -e "\e[1;33m Setting up Px4 \e[0m"
     # Installing initial dependencies
     sudo apt --quiet -y install \
         ca-certificates \
@@ -98,7 +86,6 @@ if [ "$BUILD_PX4" != "false" ]; then
             gstreamer1.0-plugins-good \
             gstreamer1.0-plugins-ugly \
             libeigen3-dev \
-            libgazebo9-dev \
             libgstreamer-plugins-base1.0-dev \
             libimage-exiftool-perl \
             libopencv-dev \
@@ -119,33 +106,18 @@ if [ "$BUILD_PX4" != "false" ]; then
     fi
     cd ${HOME}/Firmware
     make clean && make distclean
-    git checkout v1.10.1 && git submodule init && git submodule update --recursive
-    cd ${HOME}/Firmware/Tools/sitl_gazebo/external/OpticalFlow
-    git submodule init && git submodule update --recursive
-    cd ${HOME}/Firmware/Tools/sitl_gazebo/external/OpticalFlow/external/klt_feature_tracker
-    git submodule init && git submodule update --recursive
-    # NOTE: in PX4 v1.10.1, there is a bug in Firmware/Tools/sitl_gazebo/include/gazebo_opticalflow_plugin.h:43:18
-    # #define HAS_GYRO TRUE needs to be replaced by #define HAS_GYRO true
-    sed -i 's/#define HAS_GYRO.*/#define HAS_GYRO true/' ${HOME}/Firmware/Tools/sitl_gazebo/include/gazebo_opticalflow_plugin.h
-    cd ${HOME}/Firmware
+    git checkout v1.14.2 && git submodule update --init --recursive
     DONT_RUN=1 make px4_sitl gazebo
 
     #Copying this to  .bashrc file
-    grep -xF 'source ~/Firmware/Tools/setup_gazebo.bash ~/Firmware ~/Firmware/build/px4_sitl_default' ${HOME}/.bashrc || echo "source ~/Firmware/Tools/setup_gazebo.bash ~/Firmware ~/Firmware/build/px4_sitl_default" >> ${HOME}/.bashrc
+    grep -xF 'source ~/Firmware/Tools/simulation/gazebo-classic/setup_gazebo.bash ~/Firmware ~/Firmware/build/px4_sitl_default' ${HOME}/.bashrc || echo "source ~/Firmware/Tools/simulation/gazebo-classic/setup_gazebo.bash ~/Firmware ~/Firmware/build/px4_sitl_default" >> ${HOME}/.bashrc
     grep -xF 'export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:~/Firmware' ${HOME}/.bashrc || echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:~/Firmware" >> ${HOME}/.bashrc
-    grep -xF 'export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:~/Firmware/Tools/sitl_gazebo' ${HOME}/.bashrc || echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:~/Firmware/Tools/sitl_gazebo" >> ${HOME}/.bashrc
-    grep -xF 'export GAZEBO_PLUGIN_PATH=$GAZEBO_PLUGIN_PATH:/usr/lib/x86_64-linux-gnu/gazebo-9/plugins' ${HOME}/.bashrc || echo "export GAZEBO_PLUGIN_PATH=\$GAZEBO_PLUGIN_PATH:/usr/lib/x86_64-linux-gnu/gazebo-9/plugins" >> ${HOME}/.bashrc
+    grep -xF 'export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:~/Firmware/Tools/simulation/gazebo-classic/sitl_gazebo-classic' ${HOME}/.bashrc || echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:~/Firmware/Tools/simulation/gazebo-classic/sitl_gazebo-classic" >> ${HOME}/.bashrc
     grep -xF 'export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:'${HOME}'/catkin_ws/src/px4_fast_planner/models' ${HOME}/.bashrc || echo "export GAZEBO_MODEL_PATH=\$GAZEBO_MODEL_PATH:${HOME}/catkin_ws/src/px4_fast_planner/models" >> ${HOME}/.bashrc
-
-    # Copy PX4 SITL param file
-    cp $CATKIN_SRC/px4_fast_planner/config/10017_iris_depth_camera ${HOME}/Firmware/ROMFS/px4fmu_common/init.d-posix/
 
     source ${HOME}/.bashrc
 fi
 
-
-# Install MAVROS
-sudo apt install ros-melodic-mavros ros-melodic-mavros-extras -y
 ####################################### mavros_controllers setup #######################################
 echo -e "\e[1;33m Adding mavros_controllers \e[0m"
 #Adding mavros_controllers
@@ -203,14 +175,12 @@ fi
 
 ####################################### Fast-planner setup #######################################
 echo -e "\e[1;33m Adding Fast-Planner \e[0m"
-# Required for Fast-Planner
-sudo apt install ros-melodic-nlopt libarmadillo-dev -y
 
 #Adding Fast-Planner
 if [ ! -d "$CATKIN_SRC/Fast-Planner" ]; then
     echo "Cloning the Fast-Planner repo ..."
     cd $CATKIN_SRC
-    git clone https://github.com/mzahana/Fast-Planner.git
+    git clone https://github.com/HKUST-Aerial-Robotics/Fast-Planner.git
     cd ../
 else
     echo "Fast-Planner already exists. Just pulling ..."
@@ -221,7 +191,18 @@ fi
 
 # Checkout ROS Mellodic branch 
 cd $CATKIN_SRC/Fast-Planner
-git checkout changes_for_ros_melodic
+git checkout origin/master
+git apply $CATKIN_SRC/px4_fast_planner/patch/*.patch
+
+# Install nlopt v2.7.1
+cd ${HOME}
+git clone -b v2.7.1 https://github.com/stevengj/nlopt.git
+cd nlopt
+mkdir build
+cd build
+cmake ..
+make
+make install
 
 ####################################### Building catkin_ws #######################################
 cd $CATKIN_WS

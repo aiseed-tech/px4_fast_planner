@@ -1,0 +1,25 @@
+From 0d84c4038f071d48f7279a682356c85f6c52032c Mon Sep 17 00:00:00 2001
+From: Mohamed Abdelkader <mohamedashraf123@gamil.com>
+Date: Tue, 23 Jun 2020 00:01:45 +0400
+Subject: [PATCH 2/3] Remove fixed target height of 1m and get it from goal
+
+---
+ fast_planner/plan_manage/src/topo_replan_fsm.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fast_planner/plan_manage/src/topo_replan_fsm.cpp b/fast_planner/plan_manage/src/topo_replan_fsm.cpp
+index 7e15230..a97f211 100644
+--- a/fast_planner/plan_manage/src/topo_replan_fsm.cpp
++++ b/fast_planner/plan_manage/src/topo_replan_fsm.cpp
+@@ -82,7 +82,7 @@ void TopoReplanFSM::waypointCallback(const nav_msgs::PathConstPtr& msg) {
+     if (target_type_ == TARGET_TYPE::MANUAL_TARGET) {
+       target_point_(0) = msg->poses[0].pose.position.x;
+       target_point_(1) = msg->poses[0].pose.position.y;
+-      target_point_(2) = 1.0;
++      target_point_(2) = msg->poses[0].pose.position.z;//1.0;
+       std::cout << "manual: " << target_point_.transpose() << std::endl;
+ 
+     } else if (target_type_ == TARGET_TYPE::PRESET_TARGET) {
+-- 
+2.51.0
+

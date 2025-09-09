@@ -1,0 +1,25 @@
+From 5923dfd6f4e53d6bb0af5e03b4ed5795cb33415b Mon Sep 17 00:00:00 2001
+From: Mohamed Abdelkader <mohamedashraf123@gamil.com>
+Date: Thu, 25 Jun 2020 17:29:25 +0400
+Subject: [PATCH 3/3] Use user-defined goal setpoint
+
+---
+ fast_planner/plan_manage/launch/topo_replan.launch | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fast_planner/plan_manage/launch/topo_replan.launch b/fast_planner/plan_manage/launch/topo_replan.launch
+index 45887d0..d416f28 100755
+--- a/fast_planner/plan_manage/launch/topo_replan.launch
++++ b/fast_planner/plan_manage/launch/topo_replan.launch
+@@ -37,7 +37,7 @@
+     <!-- 1: use 2D Nav Goal to select goal  -->
+     <!-- 2: use global waypoints below  -->
+     <!-- 3: use global waypoints below to set reference path --> 
+-    <arg name="flight_type" value="2" />
++    <arg name="flight_type" value="1" />
+ 
+     <!-- global waypoints -->
+     <arg name="point_num" value="3" />
+-- 
+2.51.0
+

@@ -1,0 +1,29 @@
+FROM px4io/px4-dev-ros-noetic
+
+SHELL ["/bin/bash", "-c"]
+ENV DEBIAN_FRONTEND noninteractive
+ENV DISPLAY :99
+
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F42ED6FBAB17C654 \
+  && apt-get update && apt-get -y --quiet install \
+  apt-utils \
+  ros-noetic-laser-geometry \
+  ros-noetic-rviz \
+  ros-noetic-rqt-reconfigure \
+  ros-noetic-mavros \
+  ros-noetic-mavros-extras \
+  libarmadillo-dev \
+  libgazebo11-dev \
+  vim
+
+ENV GAZEBO_PLUGIN_PATH /usr/lib/x86_64-linux-gnu/gazebo-11/plugins
+
+RUN pip3 install cython && pip3 install mavproxy
+
+COPY . /root/catkin_ws/src/px4_fast_planner/
+
+RUN cd ~/catkin_ws/src/px4_fast_planner/install \
+  && . /opt/ros/noetic/setup.bash \
+  && ./setup.sh
+
+CMD ["bash", "-i", "-c", "roslaunch px4_fast_planner px4_fast_planner.launch"]

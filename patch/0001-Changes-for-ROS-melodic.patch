@@ -1,0 +1,52 @@
+From b659f3ff50c82da6a082a32d195ed0ecc0dffd22 Mon Sep 17 00:00:00 2001
+From: Mohamed Abdelkader <mohamedashraf123@gamil.com>
+Date: Sun, 21 Jun 2020 01:35:05 +0400
+Subject: [PATCH 1/3] Changes for ROS melodic
+
+---
+ uav_simulator/Utils/multi_map_server/CMakeLists.txt    | 2 +-
+ uav_simulator/Utils/odom_visualization/CMakeLists.txt  | 2 +-
+ uav_simulator/so3_disturbance_generator/CMakeLists.txt | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/uav_simulator/Utils/multi_map_server/CMakeLists.txt b/uav_simulator/Utils/multi_map_server/CMakeLists.txt
+index 29cd556..37237f9 100755
+--- a/uav_simulator/Utils/multi_map_server/CMakeLists.txt
++++ b/uav_simulator/Utils/multi_map_server/CMakeLists.txt
+@@ -166,7 +166,7 @@ add_dependencies(multi_map_visualization multi_map_server_messages_cpp)
+ target_link_libraries(multi_map_visualization 
+    ${catkin_LIBRARIES}
+    ${ARMADILLO_LIBRARIES}
+-   pose_utils
++   ${pose_utils_LIBRARIES}
+ )
+ 
+ #############
+diff --git a/uav_simulator/Utils/odom_visualization/CMakeLists.txt b/uav_simulator/Utils/odom_visualization/CMakeLists.txt
+index 7b42d04..9bc9c46 100755
+--- a/uav_simulator/Utils/odom_visualization/CMakeLists.txt
++++ b/uav_simulator/Utils/odom_visualization/CMakeLists.txt
+@@ -159,7 +159,7 @@ add_executable(odom_visualization src/odom_visualization.cpp)
+ target_link_libraries(odom_visualization
+    ${catkin_LIBRARIES}
+    ${ARMADILLO_LIBRARIES}
+-   pose_utils
++   ${pose_utils_LIBRARIES}
+ )
+ 
+ #############
+diff --git a/uav_simulator/so3_disturbance_generator/CMakeLists.txt b/uav_simulator/so3_disturbance_generator/CMakeLists.txt
+index 235b842..4cffbda 100755
+--- a/uav_simulator/so3_disturbance_generator/CMakeLists.txt
++++ b/uav_simulator/so3_disturbance_generator/CMakeLists.txt
+@@ -71,6 +71,6 @@ add_dependencies(so3_disturbance_generator ${PROJECT_NAME}_gencfg)
+ target_link_libraries(so3_disturbance_generator 
+    ${catkin_LIBRARIES}
+    ${ARMADILLO_LIBRARIES}
+-   pose_utils 
++   ${pose_utils_LIBRARIES}
+ )
+ 
+-- 
+2.51.0
+
