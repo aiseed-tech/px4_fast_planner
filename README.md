@@ -20,7 +20,7 @@ This setup is tested on Ubuntu 18 + ROS Melodic
 * Clone this package into your `~/catkin_ws/src`
 ```sh
 cd ~/catkin_ws/src
-git clone https://github.com/mzahana/px4_fast_planner.git
+git clone https://github.com/aiseed-tech/px4_fast_planner.git
 ```
 
 * You can use the `setup.sh` script in the `install` folder to easily setup all dependencies as follows
@@ -28,17 +28,16 @@ git clone https://github.com/mzahana/px4_fast_planner.git
 cd ~/catkin_ws/src/px4_fast_planner/install
 ./setup.sh
 ```
-The script will ask if PX4 is to be installled or not. You would likely want to skip this if you are doing the setup on an on-board computer. To do that, just pass `n` to the `setup.sh` script when asked
-```sh
-cd ~/catkin_ws/src/px4_fast_planner/install
-./setup.sh
-```
+The script will install PX4 by default. You would likely want to skip this if you are doing the setup on an on-board computer. To do that, please modify install/setup.sh.
+
 **NOTE: you may need to provide credentials to `sudo` when prompted, for the script to continue**
 
-The `setup.sh` script install PX4 v1.10.1, `mavros_controllers` package, and modified `Fast-Planner` package.
+The `setup.sh` script install PX4 v1.14.2, `mavros_controllers` package, and modified `Fast-Planner` package.
 
 ## Installation inside docker container
-You can setup the system inside a docker container that already has Ubuntu 18 + ROS Melodic + PX4 frimware v1.10.1. Use [this repository](https://github.com/mzahana/containers) to setup docker and required container, then install setup px4_fast_planner as mentioned above.
+```sh
+./run_docker.sh
+```
 
 # Running in Simulation
 * Open a termianl, and run the following command,
