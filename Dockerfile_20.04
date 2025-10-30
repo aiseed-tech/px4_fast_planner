@@ -14,6 +14,7 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F42ED6FBAB17C654 \
   ros-noetic-mavros-extras \
   libarmadillo-dev \
   libgazebo11-dev \
+  python-is-python3 \
   vim
 
 ENV GAZEBO_PLUGIN_PATH /usr/lib/x86_64-linux-gnu/gazebo-11/plugins
